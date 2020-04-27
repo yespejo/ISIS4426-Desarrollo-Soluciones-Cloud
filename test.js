@@ -8,6 +8,6 @@ function mensaje(petic, resp) {
 }
 server.on('request', mensaje);
  
-server.listen(4000, function () {
-   console.log('La Aplicación está funcionando en el puerto 4000');
+server.listen(process.env.PORT, function () {
+   console.log('La Aplicación está funcionando en el puerto ' + process.env.PORT);
 });
