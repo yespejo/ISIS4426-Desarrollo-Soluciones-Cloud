@@ -1,0 +1,55 @@
+<div class="container p-4">
+    <div class="row">
+      {{#if isLogged}}
+        {{#each videos}}
+            <div style="max-width: inherit;"  class="col-md-3">
+                <div class="card-body">
+                  <a href="http://d2heyepw6p8ugw.cloudfront.net/{{this.converted_video}}" target="_blank">
+                      <h3 class="card-title text-uppercase">
+                            {{this.name}} {{this.last_name}}
+                      </h3>
+                  </a>
+                  <p>{{this.email}}</p>
+                  <p>Estado: {{this.status}}</p>
+                    <div>
+                        <video width="320" height="240" controls>
+                          <source src="http://d2heyepw6p8ugw.cloudfront.net/{{this.converted_video}}" type="video/mp4">
+                          <!---<source src="movie.ogg" type="video/ogg">
+                        Your browser does not support the video tag.--->
+                        </video> 
+                    </div>
+                </div>
+            </div>
+        {{/each}}
+      {{else}}
+        {{#each videos}}
+           <div style="max-width: inherit;"  class="col-md-3">
+               <div class="card-body">
+                 <a href="http://d2heyepw6p8ugw.cloudfront.net/{{this.converted_video}}" target="_blank">
+                     <h3 class="card-title text-uppercase">
+                          {{this.name}} {{this.last_name}}
+                     </h3>
+                 </a>
+                 <p>{{this.email}}</p>
+                 <div>
+                    <video width="320" height="240" controls>
+                      <source src="http://d2heyepw6p8ugw.cloudfront.net/{{this.converted_video}}" type="video/mp4">
+                      <!---<source src="movie.ogg" type="video/ogg">
+                    Your browser does not support the video tag.--->
+                    </video> 
+                 </div>
+               </div>
+           </div>
+        {{/each}}
+      {{/if}}
+        {{#if url}}
+        <br><br><br>
+        <div class="col-md-6"> 
+            <div class="card card-body text-center">
+              <p>Agregar video </p>
+              {{log 'videos' url}}
+              <a href="/videos/add/{{this.url}}">Subir un video al concurso</a>
+        </div>
+        {{/if}}
+    </div>
+</div>

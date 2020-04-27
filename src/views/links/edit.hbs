@@ -1,0 +1,42 @@
+<div class="container p-4">
+    <div class="row">
+         <div class="col-md-4 mx-auto">
+             <div class="card">
+               <div class="card-body">
+                  <form action="/links/edit/{{contest.id}}" method="POST" enctype="multipart/form-data">
+                         <div class="form-group">
+                                
+                             <input type="text" value="{{contest.name}}" class="form-control" name="name" placeholder="nombre de concurso" autofocus>
+                         </div>
+                      <div class="form-group">
+                          <input type="text" name="url" value="{{contest.url}}" class="form-control" placeholder="url">
+                      </div>
+                     <div class="form-group">
+                           Fecha Inicial
+                          <!--<p> {{contest.startdate}} </p>-->
+                          <input type="date" id="inicial" name="startdate" value={{contest.startdate}}>
+                      </div>
+                      <div class="form-group">
+                           Fecha Final
+                          <!-- <p> {{contest.enddate}} </p> -->
+                          <input type="date" id="final" name="enddate" value="{{contest.enddate}}">
+                      </div>
+                      <div class="form-group">
+                          <textarea name="description" rows="2" class="form-control" placeholder="Descripcion premio">{{contest.description}}</textarea>
+                      </div>
+                       <img src="/uploads/{{contest.id}}/{{contest.image}}" alt="Banner" class="card-img-top mx-auto m-2 rounded-circle w-50">
+                       <div class="form-group">
+                           Banner
+                           <input type="file" id="file" name="image">
+                      </div>
+                      <div class="form-group">
+                          <button class="btn btn-success btn-block">
+                              SAVE
+                          </button>
+                      </div>
+                  </form>
+                 </div> 
+             </div>
+         </div>
+    </div>
+</div>
