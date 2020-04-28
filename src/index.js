@@ -11,9 +11,12 @@ const validator = require('express-validator');
 const fileUpload = require('express-fileupload');
 var AWS = require('aws-sdk');
 const dotenv = require('dotenv');
-const redis = require('redis');
-const redisClient = redis.createClient(6379, 'session-cache.774h6u.ng.0001.use2.cache.amazonaws.com');
-const redisStore = require('connect-redis')(session);
+var memjs = require('memjs')
+var MemcachedStore = require('connect-memcached')(session);
+
+//const redis = require('redis');
+//const redisClient = redis.createClient(6379, 'session-cache.774h6u.ng.0001.use2.cache.amazonaws.com');
+//const redisStore = require('connect-redis')(session);
 
 /*
 if(process.env.NODE_ENV === 'aws'){
@@ -61,10 +64,13 @@ app.use(express.json());
 app.use(fileUpload());
 
 app.use(session({
-   secret: 'alex',
-   resave: false,
-   saveUninitialized: false,
-   store: new redisStore({ host: 'session-cache.774h6u.ng.0001.use2.cache.amazonaws.com', port: 6379, client: redisClient, ttl: 86400 })
+    secret: 'alex',
+    resave: false,
+    saveUninitialized: false,
+    store: new MemcachedStore({
+      hosts: [process.env.MEMCACHE_URL || '127.0.0.1:11211']
+    })
+//   store: new redisStore({ host: 'session-cache.774h6u.ng.0001.use2.cache.amazonaws.com', port: 6379, client: redisClient, ttl: 86400 })
 //   store: new MySQLStore(database)
 }));
 
