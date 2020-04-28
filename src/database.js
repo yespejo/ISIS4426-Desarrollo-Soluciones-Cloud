@@ -7,7 +7,7 @@ const fs = require('fs');
 
 const database={
     host:process.env.HOST,
-    port:process.env.PROTOCOL_CONNECTION_LOSTDB,
+    port:process.env.PORT_DB,
     user:process.env.USER_DB,
     password:process.env.PASSWORD_DB,
     database:process.env.DATABASE
