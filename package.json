@@ -13,7 +13,7 @@
     "aws-sdk": "^2.653.0",
     "bcryptjs": "^2.4.3",
     "connect-flash": "^0.1.1",
-    "connect-memcached": "1.0.0",
+    "connect-memjs": "0.2.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-fileupload": "^1.1.6",

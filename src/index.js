@@ -11,19 +11,32 @@ const validator = require('express-validator');
 const fileUpload = require('express-fileupload');
 var AWS = require('aws-sdk');
 const dotenv = require('dotenv');
-var memjs = require('memjs')
-var MemcachedStore = require('connect-memcached')(session);
+var MemcachedStore = require('connect-memjs')(session);
+
+
 
 //const redis = require('redis');
 //const redisClient = redis.createClient(6379, 'session-cache.774h6u.ng.0001.use2.cache.amazonaws.com');
 //const redisStore = require('connect-redis')(session);
 
-/*
-if(process.env.NODE_ENV === 'aws'){
-  dotenv.config( {path: "./environments/aws.env"});
-}else{
-  dotenv.config( {path: "./environments/local.env"});
-}*/
+//inicializar
+const app = express();
+require('./lib/passport');
+
+
+
+app.use(session({
+  secret: 'alex',
+  resave: 'false',
+  saveUninitialized: 'false',
+  store: new MemcachedStore({
+    servers: ['mc1.dev.ec2.memcachier.com:11211'],
+    prefix: '_session_'
+  })
+//   store: new redisStore({ host: 'session-cache.774h6u.ng.0001.use2.cache.amazonaws.com', port: 6379, client: redisClient, ttl: 86400 })
+//    store: new MySQLStore(database)
+}));
+
 
 dotenv.config( {path: "../environments/aws.env"});
 
@@ -34,9 +47,6 @@ const database={
   password:process.env.PASSWORD_DB,
   database:process.env.DATABASE
 };
-//inicializar
-const app = express();
-require('./lib/passport');
 
 
 //redisClient.on('error', (err) => {
@@ -63,16 +73,6 @@ app.use(express.urlencoded({extended: false}));
 app.use(express.json()); 
 app.use(fileUpload());
 
-app.use(session({
-    secret: 'alex',
-    resave: false,
-    saveUninitialized: false,
-    store: new MemcachedStore({
-      hosts: [process.env.MEMCACHIER_SERVERS || 'mc1.dev.ec2.memcachier.com:11211']
-    })
-//   store: new redisStore({ host: 'session-cache.774h6u.ng.0001.use2.cache.amazonaws.com', port: 6379, client: redisClient, ttl: 86400 })
-//   store: new MySQLStore(database)
-}));
 
 app.use(flash());
 app.use(passport.initialize());
