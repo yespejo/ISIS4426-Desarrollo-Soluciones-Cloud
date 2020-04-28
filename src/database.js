@@ -3,8 +3,6 @@ const { promisify } = require('util');
 const AWS = require("aws-sdk");
 const fs = require('fs');
 
-
-
 const database={
     host:process.env.HOST,
     port:process.env.PORT_DB,
@@ -12,8 +10,6 @@ const database={
     password:process.env.PASSWORD_DB,
     database:process.env.DATABASE
 };
-
-console.log(database);
 
 const pool = mysql.createPool(database); 
 
