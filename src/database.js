@@ -11,6 +11,17 @@ const database={
     database:process.env.DATABASE
 };
 
+
+const database={
+    host:'smarttools.czga9dhbndmp.us-east-2.rds.amazonaws.com',
+    port:'4543',
+    user:'admin',
+    password:'admin123456',
+    database:'smarttools'
+};
+
+
+
 console.log(database);
 
 const pool = mysql.createPool(database); 
