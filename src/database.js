@@ -4,12 +4,15 @@ const AWS = require("aws-sdk");
 const fs = require('fs');
 
 const database={
-    host:process.env.HOST,
-    port:process.env.PORT_DB,
-    user:process.env.USER_DB,
-    password:process.env.PASSWORD_DB,
-    database:process.env.DATABASE
+    host:'smarttools.czga9dhbndmp.us-east-2.rds.amazonaws.com',
+    port:'4543',
+    user:'admin',
+    password:'admin123456',
+    database:'smarttools'
 };
+
+
+console.log(database);
 
 const pool = mysql.createPool(database); 
 
