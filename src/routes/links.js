@@ -3,26 +3,8 @@ const router = express.Router();
 const fs = require('fs');
 const path = require('path');
 var AWS = require('aws-sdk');
-const RUTA_GESTOR_ARCHIVOS_RAIZ = process.env.ruta_gestion_archivos_raiz;
-const RUTA_GESTOR_ARCHIVOS = process.env.ruta_gestion_archivos;
-
 const pool = require('../database');
 const {isLoggedIn} = require('../lib/auth');
-
-// Set the region 
-
-
-
-
-
-
-/*AWS.config.update({
-  region: 'us-east-1',
-  accessKeyId:process.env.ACCES_KEY_ID,
-  secretAccessKey:process.env.SECRET_ACCESS_KEY
-});
-*/
-
 
 var rds = new AWS.RDS({apiVersion: '2014-10-31'});
 
@@ -44,7 +26,7 @@ router.post('/add',isLoggedIn, function (req, res, success){
         }
         let nameImage
         image===null?nameImage='no-image':nameImage=image.name;
-        //const {name, url, startdate, enddate, description} =archivos;
+
         const newContest = {
              name: req.body.name,
              image:nameImage,
@@ -54,20 +36,19 @@ router.post('/add',isLoggedIn, function (req, res, success){
              description: req.body.description,
              user_id: req.user.id
         };
-        const newContestD = {
-             namecontest: req.body.name,
-             image:nameImage,
-             url: req.body.url,
-             startdate: req.body.startdate,
-             enddate: req.body.enddate,
-             description: req.body.description,
-             user_id: req.user.id
-        };        
-        //Si es correcto se crea la carpeta del concurso para la gestion de archivos
+
         let save = function () {
             var params = {
                 TableName: "contest",
-                Item: newContestD
+                Item: {
+                    namecontest: req.body.name,
+                    image:nameImage,
+                    url: req.body.url,
+                    startdate: req.body.startdate,
+                    enddate: req.body.enddate,
+                    description: req.body.description,
+                    user_id: req.user.id
+                }
             };
             pool.aws.put(params, function (err, data) {
                 if (err) {
@@ -88,16 +69,16 @@ router.post('/add',isLoggedIn, function (req, res, success){
                 throw err
               }else{
                 var contestid=res[0].id;
-                //if(contestid){
-                  console.log("Ruta archivos: ",RUTA_GESTOR_ARCHIVOS_RAIZ);
-                  if(!fs.existsSync(RUTA_GESTOR_ARCHIVOS_RAIZ))
-                        fs.mkdirSync(RUTA_GESTOR_ARCHIVOS_RAIZ);
-                        fs.mkdirSync(RUTA_GESTOR_ARCHIVOS+contestid);
-                        fs.mkdirSync(RUTA_GESTOR_ARCHIVOS+contestid+'//inicial');
-                        fs.mkdirSync(RUTA_GESTOR_ARCHIVOS+contestid+'//convertido');
+
+                  console.log("Ruta archivos: ","src/public/uploads/");
+                  if(!fs.existsSync("src/public/uploads/"))
+                        fs.mkdirSync("src/public/uploads/");
+                        fs.mkdirSync("src/public/uploads/" + contestid);
+                        fs.mkdirSync("src/public/uploads/" + contestid + '/inicial');
+                        fs.mkdirSync("src/public/uploads/" + contestid + '/convertido');
                         if(image!==null){
-                            let filename=`concurso-${contestid}/${image.name}`;
-                            image.mv(RUTA_GESTOR_ARCHIVOS+contestid+`//${image.name}`,function(err){
+                            let filename = "concurso-" + contestid + "/" + image.name;
+                            image.mv("src/public/uploads/" + contestid + "/" + image.name ,function(err){
                                 if(err){
                                     return res.status(500).send(err);
                                 }
@@ -108,7 +89,6 @@ router.post('/add',isLoggedIn, function (req, res, success){
                   else{
                       success(result);
                   }
-                //} 
               }
             }); 
         }
@@ -215,9 +195,9 @@ router.post ('/edit/:id', isLoggedIn, async (req, res, success) => {
         if (err) {
           throw err
         }else{
-          if(fs.existsSync(RUTA_GESTOR_ARCHIVOS+id))
+          if(fs.existsSync("src/public/uploads/" + id))
             if(image!==null){
-                image.mv(RUTA_GESTOR_ARCHIVOS+id+`//${image.name}`,function(err){
+                image.mv("src/public/uploads/" + id + "/" + image.name ,function(err){
                     if(err){
                         return res.status(500).send(err);
                     }

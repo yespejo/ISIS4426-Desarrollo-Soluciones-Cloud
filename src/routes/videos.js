@@ -5,41 +5,13 @@ const path = require('path');
 var AWS = require('aws-sdk');
 const exec = require('child_process').exec;
 var nameurl = [];
-const RUTA_GESTOR_ARCHIVOS_RAIZ = process.env.ruta_gestion_archivos_raiz;
-const RUTA_GESTOR_ARCHIVOS = process.env.ruta_gestion_archivos;
 const {isLoggedIn} = require('../lib/auth');
-
-
-
-// Set the region 
-
-
-
-
-/*
-AWS.config.update({
-  region: 'us-east-1',
-  accessKeyId:process.env.ACCES_KEY_ID,
-  secretAccessKey:process.env.SECRET_ACCESS_KEY
-});
-*/
-
-
-
-
-
-
-
-
-
+var helper = require('sendgrid').mail;
 
 var rds = new AWS.RDS({apiVersion: '2014-10-31'});
 
-   // Init Upload
-
 const pool = require('../database');
 
-//const {isLoggedIn} = require('../lib/auth');
 router.get ('/add', (req, res) => {
     const { url } = req.params;
     console.log("URL add: ",url);
@@ -137,7 +109,6 @@ router.get('/add/:url', async (req, res) => {
     console.log(links[0].id);
     console.log(videos);
     res.render('videos/addvideo',{links});
-    //res.render('videos/listvideos', {videos,links});
 }); 
 
 router.post('/add/id/:id', function (req, res, success){
@@ -170,19 +141,18 @@ router.post('/add/id/:id', function (req, res, success){
             original_video: nameVideo,
             contest_id: contestid
         };
-        const newVideoD = {
-            naime_video: req.body.name,
-            last_name: req.body.lastname,
-            email: req.body.email,
-            message: req.body.message,
-            original_video: nameVideo,
-            contest_id: contestid
-        };
 
         let save = function () {
             var params = {
                 TableName: "videos",
-                Item:  newVideoD
+                Item:  {
+                    naime_video: req.body.name,
+                    last_name: req.body.lastname,
+                    email: req.body.email,
+                    message: req.body.message,
+                    original_video: nameVideo,
+                    contest_id: contestid
+                }
             };
             pool.aws.put(params, function (err, data) {
                 if (err) {
@@ -200,16 +170,16 @@ router.post('/add/id/:id', function (req, res, success){
             throw err
           }else{
             let status;
-            if(fs.existsSync(RUTA_GESTOR_ARCHIVOS+contestid+'//inicial')){
+            if(fs.existsSync("src/public/uploads/" + contestid + "/inicial")){
                 if(originvideo!==null){
-                    originvideo.mv(RUTA_GESTOR_ARCHIVOS+contestid+`//inicial//${originvideo.name}`,function(err, result){
+                    originvideo.mv("src/public/uploads/" + contestid + "/inicial/" + originvideo.name ,function(err, result){
                         if(err){
                             throw err;
                         }
                     });
                     if(extension==="mp4"){
                         status="Convertido";
-                        originvideo.mv(RUTA_GESTOR_ARCHIVOS+contestid+`//convertido//${originvideo.name}`,function(err, result){
+                        originvideo.mv("src/public/uploads/" + contestid + "/convertido/" + originvideo.name,function(err, result){
                             if(err){
                                 throw err;
                             }
@@ -266,9 +236,6 @@ router.post('/add/id/:id', function (req, res, success){
                       	});
                     }
                 }
-                /*else{
-                    success(result);
-                }*/
                 success(result);
             }
           }
@@ -317,23 +284,21 @@ router.post('/add/url/:url', function (req, res, success){
             original_video: nameVideo,
             contest_id: contestid
         };
-	var dt = new Date();
-    var videoQ = dt.getTime() + "-" + nameVideo;
-        const newVideoD = {
-            name_video: req.body.name,
-            last_name: req.body.lastname,
-            email: req.body.email,
-            message: req.body.message,
-            original_video: videoQ,
-            contest_id: contestid,
-	    status_video: "-", 
-	    converted_video: "-"
-        };
-
+    	var dt = new Date();
+        var videoQ = dt.getTime() + "-" + nameVideo;
         let save = function () {
             var params = {
                 TableName: "videos",
-                Item:  newVideoD
+                Item: {
+                    name_video: req.body.name,
+                    last_name: req.body.lastname,
+                    email: req.body.email,
+                    message: req.body.message,
+                    original_video: videoQ,
+                    contest_id: contestid,
+                    status_video: "-", 
+                    converted_video: "-"
+                }
             };
             pool.aws.put(params, function (err, data) {
                 if (err) {
@@ -348,37 +313,37 @@ router.post('/add/url/:url', function (req, res, success){
           if(err){
             throw err
           }else{
-            if(fs.existsSync(RUTA_GESTOR_ARCHIVOS+contestid+'//inicial')){
+            if(fs.existsSync("src/public/uploads/" + contestid + "/inicial")){
                 if(originvideo!==null){
-                    originvideo.mv(RUTA_GESTOR_ARCHIVOS+contestid+`//inicial//${originvideo.name}`,function(err, result){
+                    originvideo.mv("src/public/uploads/" + contestid + "/inicial/" + originvideo.name,function(err, result){
                         if(err){
                             throw err;
                         }
-			const awsConfig2 = {
-        		    "region": null,
-        		    "endpoint": null,
-        		    "accessKeyId": "AKIA6AAOPTVRE2U6XSF3", "secretAccessKey": "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"
-    			};
-    			AWS.config.update(awsConfig2);
-    			const fileContent = fs.readFileSync(RUTA_GESTOR_ARCHIVOS+contestid+ '/inicial/' + originvideo.name);
-    			const paramsF = {
-          		    Bucket: 's3-bucket-uniandes-d',
-        		    Key: dt.getTime() + "-" + originvideo.name,
-        		    Body: fileContent
-    			};
-    			pool.s3.upload(paramsF, function(err, data) {
-        		    if (err) {
-            			throw err;
-        		    }
-        		    console.log('File uploaded successfully');
-    			});
+            			AWS.config.update({
+                            region: null,
+                            endpoint: null,
+                            accessKeyId: process.env.ACCESS_KEY_ID, 
+                            secretAccessKey: process.env.SECRET_ACCESS_KEY
+                        });
+            			const fileContent = fs.readFileSync("src/public/uploads/" + contestid +  "/inicial/" + originvideo.name);
 
-    			const awsConfig = {
-        		    "region": "us-east-2",
-        		    "endpoint": "http://dynamodb.us-east-2.amazonaws.com",
-        		    "accessKeyId": "AKIA6AAOPTVRE2U6XSF3", "secretAccessKey": "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"
-    			};
-    			AWS.config.update(awsConfig);
+            			pool.s3.upload({
+                            Bucket: 's3-bucket-uniandes-d',
+                            Key: dt.getTime() + "-" + originvideo.name,
+                            Body: fileContent
+                        }, function(err, data) {
+                		    if (err) {
+                                throw err;
+                		    }
+                		    console.log('File uploaded successfully');
+            			});
+
+            			AWS.config.update({
+                            region: "us-east-2",
+                            endpoint: "http://dynamodb.us-east-2.amazonaws.com",
+                            accessKeyId: process.env.ACCESS_KEY_ID, 
+                            secretAccessKey: process.env.SECRET_ACCESS_KEY
+                        });
                     });
                 }
             }
@@ -388,8 +353,8 @@ router.post('/add/url/:url', function (req, res, success){
         let status;
         if(extension==="mp4"){
             status="Convertido";
-            var convertedPath=RUTA_GESTOR_ARCHIVOS+contestid+'/convertido/'+nameVideo
-            originvideo.mv(RUTA_GESTOR_ARCHIVOS+contestid+`//convertido//${originvideo.name}`,function(err){
+            var convertedPath = "src/public/uploads/" + contestid + "/convertido/" + nameVideo;
+            originvideo.mv("src/public/uploads/" + contestid + "/convertido/" + originvideo.name,function(err){
             	if(err){
                     throw err;
                	}
@@ -417,48 +382,27 @@ router.post('/add/url/:url', function (req, res, success){
                 modify();
     	    }, 1000);
 
-           const awsConfig2 = {
-                "region": null,
-                "endpoint": null,
-                "accessKeyId": "AKIA6AAOPTVRE2U6XSF3", "secretAccessKey": "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"
-            };
-            AWS.config.update(awsConfig2);
+            var mail = new helper.Mail(
+                new helper.Email('yc.espejo10@uniandes.edu.co'), 
+                'Video procesado', 
+                new helper.Email(newVideo.email), 
+                new helper.Content('text/plain', "Hola " + newVideo.name + " " + newVideo.last_name + " Tu video se proceso sin problemas " + newVideo.original_video)
+            );
 
-            const paramsM = {
-                Destination: { 
-                    ToAddresses: [newVideo.email]
-                },
-                Message: {
-                    Body: {
-                        Html: {
-                            Charset: "UTF-8",
-                            Data: "<html><body><h1>Hola " + newVideo.name + " " + newVideo.last_name + "</h1><p style='color:red'>Tu video se proceso sin problemas </p> <p>" + newVideo.original_video + "</p></body></html>"
-                        },
-                        Text: {
-                            Charset: "UTF-8",
-                            Data: "Hola " + newVideo.name + " " + newVideo.last_name + " Tu video se proceso sin problemas " + newVideo.original_video 
-                        }
-                    },
-                    Subject: {
-                        Charset: "UTF-8",
-                        Data: "Video procesado"
-                    }
-                },
-                Source: "yeismer@minka.io"
-            };
-            const sendEmail = pool.ses.sendEmail(paramsM).promise();
-            sendEmail.then(data => {
-                console.log("email submitted to SES", data);
-            }).catch(error => {
-                console.log(error);
+//            var sg = require('sendgrid')(process.env.SENDGRID_API_KEY);
+            var sg = require('sendgrid')("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");
+            
+            var request = sg.emptyRequest({
+                method: 'POST',
+                path: '/v3/mail/send',
+                body: mail.toJSON(),
             });
 
-            const awsConfig = {
-                "region": "us-east-2",
-                "endpoint": "http://dynamodb.us-east-2.amazonaws.com",
-                "accessKeyId": "AKIA6AAOPTVRE2U6XSF3", "secretAccessKey": "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"
-            };
-            AWS.config.update(awsConfig);
+            sg.API(request, function(error, response) {
+                console.log(response.statusCode);
+                console.log(response.body);
+            console.log(response.headers);
+            });
 
             setTimeout(function(){ 
         	    pool.query('UPDATE videos SET status = ?, converted_video = ? WHERE original_video= ?',[status,videoQ,nameVideo], function(err,result){
@@ -496,9 +440,10 @@ router.post('/add/url/:url', function (req, res, success){
     	    }, 1000);
 
            const awsConfig2 = {
-                "region": null,
-                "endpoint": null,
-                "accessKeyId": "AKIA6AAOPTVRE2U6XSF3", "secretAccessKey": "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"
+                region: null,
+                endpoint: null,
+                accessKeyId: process.env.ACCESS_KEY_ID, 
+                secretAccessKey: process.env.SECRET_ACCESS_KEY
             };
             AWS.config.update(awsConfig2);
                        
@@ -520,9 +465,10 @@ router.post('/add/url/:url', function (req, res, success){
             });
 
             const awsConfig = {
-                "region": "us-east-2",
-                "endpoint": "http://dynamodb.us-east-2.amazonaws.com",
-                "accessKeyId": "AKIA6AAOPTVRE2U6XSF3", "secretAccessKey": "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"
+                region: "us-east-2",
+                endpoint: "http://dynamodb.us-east-2.amazonaws.com",
+                accessKeyId: process.env.ACCESS_KEY_ID, 
+                secretAccessKey: process.env.SECRET_ACCESS_KEY
             };
             AWS.config.update(awsConfig);
 
@@ -538,6 +484,5 @@ router.post('/add/url/:url', function (req, res, success){
   var page='/videos/add/'+url;
   res.redirect(page);
 });
-
 
 module.exports = router; 

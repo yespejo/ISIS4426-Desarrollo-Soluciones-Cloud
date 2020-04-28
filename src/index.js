@@ -32,6 +32,7 @@ app.use(session({
 
 dotenv.config( {path: "../environments/aws.env"});
 
+
 const database={
   host:process.env.HOST,
   port:process.env.PORT_DB,
@@ -39,7 +40,7 @@ const database={
   password:process.env.PASSWORD_DB,
   database:process.env.DATABASE
 };
- 
+
 app.set('port', process.env.PORT || '4000');
 app.set('views', path.join(__dirname, 'views'));
 app.engine('.hbs', exphbs({
