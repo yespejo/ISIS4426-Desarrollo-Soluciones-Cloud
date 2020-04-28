@@ -3,14 +3,14 @@ const { promisify } = require('util');
 const AWS = require("aws-sdk");
 const fs = require('fs');
 
-const database={
+/*const database={
     host:process.env.HOST,
     port:process.env.PORT_DB,
     user:process.env.USER_DB,
     password:process.env.PASSWORD_DB,
     database:process.env.DATABASE
 };
-
+*/
 
 const database={
     host:'smarttools.czga9dhbndmp.us-east-2.rds.amazonaws.com',
