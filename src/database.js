@@ -13,7 +13,7 @@ const database={
     database:process.env.DATABASE
 };
 
-console.log(database)<
+console.log(database);
 
 const pool = mysql.createPool(database); 
 
