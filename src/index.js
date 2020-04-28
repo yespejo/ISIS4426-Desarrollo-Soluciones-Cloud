@@ -39,13 +39,13 @@ const app = express();
 require('./lib/passport');
 
 
-redisClient.on('error', (err) => {
-  console.log('Redis error: ', err);
-});
+//redisClient.on('error', (err) => {
+//  console.log('Redis error: ', err);
+//});
 
 
 //settings 
-app.set('port', process.env.PORT);
+app.set('port', process.env.PORT || '4000');
 app.set('views', path.join(__dirname, 'views'));
 app.engine('.hbs', exphbs({
   defaultLayout: 'main',

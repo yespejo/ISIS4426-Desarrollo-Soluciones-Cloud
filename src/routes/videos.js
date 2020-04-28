@@ -12,11 +12,26 @@ const {isLoggedIn} = require('../lib/auth');
 
 
 // Set the region 
+
+
+
+
+/*
 AWS.config.update({
   region: 'us-east-1',
   accessKeyId:process.env.ACCES_KEY_ID,
   secretAccessKey:process.env.SECRET_ACCESS_KEY
 });
+*/
+
+
+
+
+
+
+
+
+
 
 var rds = new AWS.RDS({apiVersion: '2014-10-31'});
 
