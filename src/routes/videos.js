@@ -381,7 +381,6 @@ router.post('/add/url/:url', function (req, res, success){
                 modify();
     	    }, 1000);
 
-            console.log("----- email process begin -----");
             var mail = new helper.Mail(
                 new helper.Email('yc.espejo10@uniandes.edu.co'), 
                 'Video procesado', 
@@ -397,11 +396,11 @@ router.post('/add/url/:url', function (req, res, success){
             });
 
             sg.API(request, function(error, response) {
-                console.log(response.statusCode);
-                console.log(response.body);
-                console.log(response.headers);
+                console.log("----- email process begin -----");
+                console.log(response);
+                console.log(error);
+                console.log("----- email process end -----");
             });
-            console.log("----- email process end -----");
             setTimeout(function(){ 
         	    pool.query('UPDATE videos SET status = ?, converted_video = ? WHERE original_video= ?',[status,videoQ,nameVideo], function(err,result){
                     console.log("Res Update conv: ",result)
