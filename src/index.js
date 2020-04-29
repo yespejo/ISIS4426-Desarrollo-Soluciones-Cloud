@@ -15,6 +15,7 @@ var MemcachedStore = require('connect-memjs')(session);
 
 const app = express();
 require('./lib/passport');
+require ('newrelic');
 
 app.use(session({
   secret: 'alex',
