@@ -20,10 +20,10 @@ app.use(session({
   secret: 'alex',
   resave: 'false',
   saveUninitialized: 'false',
-//  store: new MemcachedStore({
-//    servers: ['mc1.dev.ec2.memcachier.com:11211'],
-//    prefix: '_session_'
-//  })
+  store: new MemcachedStore({
+    servers: ['mc1.dev.ec2.memcachier.com:11211'],
+    prefix: '_session_'
+  })
 }));
 
 dotenv.config( {path: "environments/aws.env"});

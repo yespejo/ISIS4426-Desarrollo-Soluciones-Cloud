@@ -75,7 +75,6 @@ router.get('/:url', async (req, res) => {
     const links = await pool.query('SELECT * FROM contest WHERE url = ?', [url]);
 
     const videos = await pool.query('SELECT * FROM videos WHERE contest_id = ?', [links[0].id]);
-    //res.render('videos/addvideo',{links});
     res.render('videos/listvideos', {videos:videos, url:url, isLogged:isLogged});
 }); 
 
@@ -382,6 +381,7 @@ router.post('/add/url/:url', function (req, res, success){
                 modify();
     	    }, 1000);
 
+            console.log("----- email process begin -----"):
             var mail = new helper.Mail(
                 new helper.Email('yc.espejo10@uniandes.edu.co'), 
                 'Video procesado', 
@@ -389,9 +389,7 @@ router.post('/add/url/:url', function (req, res, success){
                 new helper.Content('text/plain', "Hola " + newVideo.name + " " + newVideo.last_name + " Tu video se proceso sin problemas " + newVideo.original_video)
             );
 
-//            var sg = require('sendgrid')(process.env.SENDGRID_API_KEY);
-            var sg = require('sendgrid')("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");
-            
+            var sg = require('sendgrid')(process.env.SENDGRID_API_KEY);            
             var request = sg.emptyRequest({
                 method: 'POST',
                 path: '/v3/mail/send',
@@ -401,9 +399,9 @@ router.post('/add/url/:url', function (req, res, success){
             sg.API(request, function(error, response) {
                 console.log(response.statusCode);
                 console.log(response.body);
-            console.log(response.headers);
+                console.log(response.headers);
             });
-
+            console.log("----- email process end -----"):
             setTimeout(function(){ 
         	    pool.query('UPDATE videos SET status = ?, converted_video = ? WHERE original_video= ?',[status,videoQ,nameVideo], function(err,result){
                     console.log("Res Update conv: ",result)
