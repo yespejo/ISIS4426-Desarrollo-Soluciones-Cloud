@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const pool = require('../database');
 
 router.get('/loadworker', (req, res) =>{
     
@@ -7,7 +8,7 @@ router.get('/loadworker', (req, res) =>{
 	const newVideo = {
 		name: 'Prueba',
        	last_name: 'Prueba',
-        email: 'yespejo@gmail.com',
+        email: lineTime + 'yespejo@gmail.com',
         message: 'Prueba',
         original_video: 'load.mov',
         contest_id: lineTime
