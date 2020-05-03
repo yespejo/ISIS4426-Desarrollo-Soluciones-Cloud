@@ -3,7 +3,7 @@ const router = express.Router();
 
 router.get('/loadworker', (req, res) =>{
     console.log("hecho");
-    res.render('index');
+    res.render('worker');
 });
 
 module.exports = router;
