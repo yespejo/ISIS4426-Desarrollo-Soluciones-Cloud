@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../database');
+var AWS = require('aws-sdk');
 
 router.get('/loadworker', (req, res) =>{
     
